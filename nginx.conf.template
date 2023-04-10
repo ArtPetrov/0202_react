@@ -1,0 +1,24 @@
+server {
+    server_name www.local.dev local.dev;
+    listen 80;
+
+    return 301 https://local.dev$request_uri;
+}
+
+server {
+    server_name  local.dev;
+    listen       443 ssl http2;
+
+    ssl_certificate       /etc/nginx/keys/server.crt;
+    ssl_certificate_key   /etc/nginx/keys/server.key;
+    ssl_protocols         TLSv1.3;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+   location /api {
+        proxy_pass http://host.docker.internal:9999;
+   }
+}
